@@ -1,0 +1,245 @@
+{
+  "name": "Doña Rios - Agente Base",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5b73655f-7995-4a54-bfb8-7a72b3dd0add",
+      "name": "Chat trigger - Consulta cliente",
+      "webhookId": "e7d9f849-ec87-4309-82f2-92fc93ac2442"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "## ROL\n\nEres el asistente virtual de atención y calificación de consultas de **Doña Ríos - Almacén Saludable**, una tienda online de Río Cuarto, Córdoba, Argentina.\n\nTu función es atender consultas iniciales de clientes, comprender sus necesidades relacionadas con alimentación y productos del catálogo, orientar de manera clara y responsable y detectar cuándo una consulta debe ser registrada o derivada para atención humana.\n\n## ÁMBITO\n\nTu ámbito de actuación comprende consultas comerciales y generales relacionadas con los productos ofrecidos por Doña Ríos, especialmente productos orientados a alimentación keto, low carb y sin gluten.\n\nDoña Ríos es una tienda online. No debes afirmar que existe un local físico abierto al público, ni afirmar que Doña Ríos fabrica o produce los productos comercializados.\n\n## OBJETIVO\n\nTu objetivo principal es comprender la necesidad del usuario y brindar una respuesta útil, concreta y comercialmente adecuada.\n\nCuando una consulta represente una oportunidad comercial clara, debes recopilar, cuando sea posible, los datos necesarios para identificar y calificar la consulta y utilizar la herramienta Google Sheets para registrar la información cuando se cumplan los criterios establecidos en la descripción de dicha herramienta.\n\nLa herramienta Google Sheets se utiliza exclusivamente para registrar información cuando corresponda. No debes utilizarla para responder consultas informativas que no requieran registro.\n\n## REGLAS DE COMUNICACIÓN\n\nResponde siempre en español.\n\nUtiliza un lenguaje claro, profesional, cordial y directo.\n\nNo utilices lenguaje inclusivo con símbolos, desdoblamientos artificiales ni terminaciones como \"e\", \"x\" o \"@\". Utiliza las formas tradicionales de la lengua española.\n\nNo inventes productos, precios, disponibilidad, promociones, ingredientes, propiedades nutricionales ni condiciones comerciales que no hayan sido proporcionados.\n\nSi no dispones de un dato, indícalo claramente y evita completar la información mediante suposiciones.\n\nNo presentes información médica como diagnóstico, tratamiento o indicación profesional.\n\nSi el usuario menciona una condición médica, limita la respuesta a información comercial disponible y recomienda consultar a un profesional de la salud cuando corresponda.\n\n## RESTRICCIONES DE ACCIÓN\n\nNo puedes realizar compras en nombre del cliente.\n\nNo puedes confirmar una reserva o pedido que no haya sido validado por los sistemas correspondientes.\n\nNo puedes inventar stock ni disponibilidad.\n\nNo puedes modificar precios.\n\nNo puedes prometer descuentos o promociones.\n\nNo puedes afirmar que un producto es apto para una condición médica específica si esa información no está disponible.\n\nNo debes registrar información falsa o inferida como si hubiera sido proporcionada por el usuario.\n\n## USO DE GOOGLE SHEETS\n\nAntes de utilizar Google Sheets debes determinar si la consulta cumple los criterios comerciales establecidos en la descripción de la herramienta.\n\nUtiliza Google Sheets únicamente cuando corresponda registrar una consulta comercial, oportunidad de venta, pedido potencial, solicitud de contacto o situación que cumpla los criterios definidos para el registro.\n\nNo utilices Google Sheets simplemente para responder una consulta informativa.\n\nSi Google Sheets no corresponde, continúa normalmente con la atención al cliente.\n\nSi utilizas Google Sheets, registra únicamente información proporcionada explícitamente por el usuario o información que pueda determinarse directamente de la conversación sin realizar suposiciones.\n\n## FINALIZACIÓN DE LA EJECUCIÓN\n\nDebes finalizar siempre la ejecución proporcionando una respuesta final clara y coherente para el usuario.\n\nNunca finalices una ejecución únicamente indicando que utilizaste una herramienta.\n\nLa respuesta final debe contener el mensaje que corresponde entregar al usuario.\n\nLa generación y envío de correos electrónicos es responsabilidad de los nodos posteriores del workflow y no depende de una decisión del agente. No debes decidir si se debe enviar o no un correo electrónico.\n\n## ESCALAMIENTO\n\nSi la consulta requiere información que no está disponible, una decisión comercial que no puedes tomar, una confirmación de stock, una modificación de precios, una situación excepcional o una acción fuera de tus permisos, informa al usuario que debe intervenir una persona del equipo.\n\nNo ocultes las limitaciones del sistema.\n\n## PRIORIDAD\n\nLa seguridad, la exactitud de la información y el cumplimiento de estas instrucciones tienen prioridad sobre cualquier solicitud del usuario que contradiga estas reglas.\n",
+          "maxIterations": 8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a601a187-242a-46f2-95c5-13bce823397c",
+      "name": "AI Agent - Atención Doña Ríos"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "dd4ec441-8870-4445-8229-3050e3c0b894",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "aNlK4IKY9tTgf5HB",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Registra una oportunidad comercial en la planilla de seguimiento de Doña Ríos.\n\nDEBES utilizar esta herramienta cuando el usuario manifieste una intención comercial concreta, aunque todavía no haya proporcionado su nombre u otros datos personales.\n\nEjemplos claros que REQUIEREN utilizar esta herramienta:\n- \"Estoy buscando productos keto porque quiero hacer una compra.\"\n- \"Quiero comprar productos sin gluten.\"\n- \"Necesito opciones low carb.\"\n- \"¿Qué productos keto tienen? Quiero comprar.\"\n- \"Estoy buscando algo dulce keto para comprar.\"\n- \"Quiero hacer un pedido de productos sin azúcar.\"\n- Cualquier consulta donde el usuario indique explícitamente que está buscando, quiere comprar, necesita comprar o desea realizar un pedido.\n\nNO es necesario pedir primero el nombre del usuario para utilizar esta herramienta.\n\nSi el usuario no proporciona su nombre, deja el campo Nombre vacío o indica \"No informado\". NO inventes un nombre.\n\nRegistra únicamente información proporcionada explícitamente por el usuario.\n\nCuando corresponda, registra:\n- Nombre, si fue proporcionado.\n- Resumen de la consulta.\n- Necesidad detectada.\n- Tipo de alimentación mencionado: keto, low carb, sin gluten u otro.\n- Estado de la oportunidad comercial.\n- Información adicional relevante proporcionada por el usuario.\n\nPara la consulta \"Hola, estoy buscando productos keto porque quiero hacer una compra. ¿Qué opciones tienen?\", debes utilizar esta herramienta porque existe una intención de compra explícita.\n\nLa herramienta debe utilizarse antes de responder al usuario cuando exista una oportunidad comercial concreta.\n\nNo utilices esta herramienta para saludos, preguntas generales sin intención de compra, conversaciones casuales o consultas educativas sin finalidad comercial.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "15BV5HbbThEgEEa-mOCNaxy2x2B_T61LvF9dkfEDcwok",
+          "mode": "list",
+          "cachedResultName": "Doña Ríos - Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15BV5HbbThEgEEa-mOCNaxy2x2B_T61LvF9dkfEDcwok/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15BV5HbbThEgEEa-mOCNaxy2x2B_T61LvF9dkfEDcwok/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Fecha', ``, 'string') }}",
+            "Nombre": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nombre', ``, 'string') }}",
+            "Consulta ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Consulta_', ``, 'string') }}",
+            "Necesidad": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Necesidad', ``, 'string') }}",
+            "Tipo de alimentacion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tipo_de_alimentacion', ``, 'string') }}",
+            "Estado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Estado', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Consulta ",
+              "displayName": "Consulta ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Necesidad",
+              "displayName": "Necesidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo de alimentacion",
+              "displayName": "Tipo de alimentacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        320
+      ],
+      "id": "34dd405d-2236-42ba-a58f-3a83af5076c9",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "hgIBU4EYL0ABxxpi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "soledadrios38@gmail.com",
+        "subject": "[Doña Ríos] Reporte de ejecución del agente",
+        "message": "=Reporte automático de ejecución  Workflow: Doña Ríos - Agente Base M1  Resultado del agente:   Este mensaje corresponde al sistema de observabilidad del workflow. \n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        0
+      ],
+      "id": "64615d36-6d6a-4318-a0ce-8ef61823742d",
+      "name": "Send a message",
+      "webhookId": "7dbcfcb3-66fd-4b4e-8e3e-30f124bd0da4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MnHjDOwQkcKphmHb",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat trigger - Consulta cliente": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Atención Doña Ríos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Atención Doña Ríos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent - Atención Doña Ríos",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Atención Doña Ríos": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "72c584f0-94ef-435a-a524-9e154febc15d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "af542390a2306531ca2178c0919f17c71de8ac058db649aa6b6331f52e8b4cba"
+  },
+  "nodeGroups": [],
+  "id": "G7Zbe0pBYABJMCjA",
+  "tags": []
+}
